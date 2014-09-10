@@ -66,11 +66,24 @@ class Game < ActiveRecord::Base
     (1..self.available_dice).map { rand(1..6) }.sort.map { |face| [face, dice[face]] }
   end
 
-  def score(scoring_dice)
-    straight = scoring_dice == ['1', '2', '3', '4', '5', '6']
 
-    two_three_of_a_kind = (scoring_dice[0..2] && scoring_dice[0..2].length == 3 && scoring_dice[1..2].all? { |scoring_die| scoring_die == scoring_dice[0] }) &&
-      (scoring_dice[3..5] && scoring_dice[3..5].length == 3 && scoring_dice[4..5].all? { |scoring_die| scoring_die == scoring_dice[3] })
+  def is_it_a_straight?(scoring_dice)
+    scoring_dice == ['1', '2', '3', '4', '5', '6']
+  end
+
+  def is_it_two_of_a_kind?(scoring_dice)
+    (scoring_dice[0..2] && scoring_dice[0..2].length == 3 && scoring_dice[1..2].all? { |scoring_die| scoring_die == scoring_dice[0] }) &&
+        (scoring_dice[3..5] && scoring_dice[3..5].length == 3 && scoring_dice[4..5].all? { |scoring_die| scoring_die == scoring_dice[3] })
+  end
+
+
+
+  def score(scoring_dice)
+    # straight = scoring_dice == ['1', '2', '3', '4', '5', '6']
+
+    straight = is_it_a_straight?(scoring_dice)
+
+    two_three_of_a_kind = is_it_two_of_a_kind?(scoring_dice)
 
     three_pairs = scoring_dice[0] == scoring_dice[1] &&
       scoring_dice[2] == scoring_dice[3] &&
